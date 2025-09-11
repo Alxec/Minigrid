@@ -64,7 +64,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     keywords=["Memory, Environment, Agent, RL, Gymnasium"],
-    python_requires=">=3.7, <3.11",
+    python_requires=">=3.7",
     packages=[package for package in find_packages() if package.startswith("minigrid")],
     include_package_data=True,
     install_requires=get_requirements(),
