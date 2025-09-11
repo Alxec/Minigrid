@@ -27,19 +27,23 @@ class L_Env(MiniGridEnv):
 
         mission_space = MissionSpace(mission_func=self._gen_mission)
         
+        #This genius step uses max_steps if it is in kwargs, and defaults to the right if not
+        max_steps = kwargs.pop("max_steps", 10 * size * size)
         super().__init__(
             mission_space=mission_space,
             grid_size=size,
-            max_steps=10*size*size,
-            # Set this to True for maximum speed
-            see_through_walls=True
+            max_steps=max_steps,
+            see_through_walls=True,
+            **kwargs
         )
+
+        self.action_space = spaces.Discrete(4)
 
     @staticmethod
     def _gen_mission():
         return "reach the goal"
 
-    def _gen_grid(self, width, height):
+    def _gen_grid(self, width, height, regenerate):
         # Create an empty grid
         self.grid = Grid(width, height)
         
@@ -111,7 +115,8 @@ class LEnv_16(L_Env):
         
 class LEnv_20(L_Env):
     def __init__(self, **kwargs):
-        super().__init__(size=20,Lwidth=12,Lheight=10,**kwargs)
+        super().__init__(size=20,Lwidth=12,Lheight=10, agent_start_pos=None,
+                         **kwargs)
         
 class LEnv_18(L_Env):
     def __init__(self, **kwargs):
