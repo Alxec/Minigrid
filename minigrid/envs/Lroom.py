@@ -43,7 +43,7 @@ class L_Env(MiniGridEnv):
     def _gen_mission():
         return "reach the goal"
 
-    def _gen_grid(self, width, height):
+    def _gen_grid(self, width, height, regenerate):
         # Create an empty grid
         self.grid = Grid(width, height)
         
