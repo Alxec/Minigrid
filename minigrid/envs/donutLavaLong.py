@@ -127,7 +127,8 @@ class Lava_Donut_Long_Env(MiniGridEnv):
             self.grid.set(int(self.width/2)-4, int(height/2)+1, Gates())
 
             # Place lava
-            self.put_obj(Fake_Lava(), int(self.width/2)-2, int(height/2))
+            self.target_pos = (int(self.width/2)-2, int(height/2))
+            self.put_obj(Fake_Lava(), *self.target_pos)
             self.put_obj(Lava(), int(self.width/2)+2, int(height/2))
             
             # Place the agent

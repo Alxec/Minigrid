@@ -90,7 +90,8 @@ class Lava_Corners(MiniGridEnv):
 
 
             # Place lava
-            self.put_obj(Fake_Lava(), 1, height-2)
+            self.target_pos = (1, height-2)
+            self.put_obj(Fake_Lava(), *self.target_pos)
             self.put_obj(Lava(), self.width-2, 1)
             
             # Place the agent
