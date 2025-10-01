@@ -205,6 +205,27 @@ def register_minigrid_envs():
     )
 
 
+    register(
+        id='MiniGrid-Lava-Maze-neg05-v0',
+        entry_point='minigrid.envs:Lava_Maze',
+        kwargs={"neg": 0.5}
+    )
+
+
+    register(
+        id='MiniGrid-Lava-Maze-neg05-v1',
+        entry_point='minigrid.envs:Lava_Maze',
+        kwargs={"size": 19, "neg": 0.5}
+    )
+
+
+    register(
+        id='MiniGrid-Lava-Maze-neg05-v2',
+        entry_point='minigrid.envs:Lava_Maze',
+        kwargs={"size": 21, "neg": 0.5}
+    )
+
+
 
     register(
         id='MiniGrid-DonutLava-16x16-v0',
@@ -1523,5 +1544,5 @@ def register_minigrid_envs():
     )
 
 
-__version__ = "1.3.1"
+__version__ = "1.3.2"
 register_minigrid_envs()
