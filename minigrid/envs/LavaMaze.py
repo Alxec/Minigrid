@@ -82,7 +82,7 @@ class Lava_Maze(MiniGridEnv):
             self.place_shape('plus', (width/3-1,height/3-5), self.x_color)
             self.place_shape('plus', (width/3,height/3-5), self.x_color)
             self.place_shape('plus', (width/3+1,height/3-5), self.x_color)
-            self.place_shape('plus', (width/3+2,height/3-5), self.x_color)
+            self.place_shape('plus', (width/3-2,height/3-5), self.x_color)
             self.place_shape('plus', (width/3-3,height/3+4), self.plus_color)
             self.place_shape('plus', (width/3-2,height/3+4), self.plus_color)
             self.place_shape('plus', (width/3-1,height/3+4), self.plus_color)
@@ -90,14 +90,14 @@ class Lava_Maze(MiniGridEnv):
 
             #Adding the walls in the center
             self.grid.horz_wall(0, int(height/3), length=int(width/3)+1)
-            self.grid.horz_wall(int(width/6)+1, int(2*height/3), length=int(width/6))
+            self.grid.horz_wall(int(width/6)+1, height-height//3-1, length=int(width/6))
             self.grid.horz_wall(int(5*width/6), int(height/3), length=int(width/6))
-            self.grid.vert_wall(int(2*width/3), 0, length=int(2*height/3))
+            self.grid.vert_wall(width-width//3-1, 0, length=int(2*height/3))
             self.grid.vert_wall(int(width/3), int(2*height/3), length=int(height/3))
 
             #Adding the curtains
             for i in range(int(width/6)):
-                self.grid.set(int(i+1), int(2*height/3), Gates())
+                self.grid.set(int(i+1), height-height//3-1, Gates())
                 self.grid.set(int(5*width/6)-1-i, int(height/3), Gates())
 
 
