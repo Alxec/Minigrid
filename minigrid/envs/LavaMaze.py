@@ -21,6 +21,7 @@ class Lava_Maze(MiniGridEnv):
         order = 'TPXD',
         neg = 0,
         max_steps=200,
+        curtains=True,
         **kwargs
     ):
         self.agent_start_pos = agent_start_pos
@@ -34,6 +35,7 @@ class Lava_Maze(MiniGridEnv):
         self.shuffle_indices = [0,1,2]
         self.order = order
         self.neg=neg
+        self.curtains=curtains
         
         mission_space = MissionSpace(mission_func=self._gen_mission)
         
@@ -96,15 +98,16 @@ class Lava_Maze(MiniGridEnv):
             self.grid.vert_wall(int(width/3), int(2*height/3), length=int(height/3))
 
             #Adding the curtains
-            for i in range(int(width/6)):
-                self.grid.set(int(i+1), height-height//3-1, Gates())
-                self.grid.set(int(5*width/6)-1-i, int(height/3), Gates())
+            if self.curtains:
+                for i in range(int(width/6)):
+                    self.grid.set(int(i+1), height-height//3-1, Gates())
+                    self.grid.set(int(5*width/6)-1-i, int(height/3), Gates())
 
 
             # Place lava
-            self.target_pos = (int(width/3)-1, int(2*height/3)+1)
+            self.target_pos = (int(width/3)-1, height-2)
             self.put_obj(Fake_Lava(), *self.target_pos)
-            self.put_obj(Lava(), self.width-2, 1)
+            self.put_obj(Lava(), self.width-2, height//3-1)
             
             # Place the agent
             if self.agent_start_pos is not None:
