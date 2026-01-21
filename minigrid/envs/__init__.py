@@ -18,6 +18,8 @@ from minigrid.envs.keycorridor import KeyCorridorEnv
 from minigrid.envs.lavagap import LavaGapEnv
 from minigrid.envs.lockedroom import LockedRoom, LockedRoomEnv
 from minigrid.envs.Lroom import LEnv_16, LEnv_18, LEnv_20
+from minigrid.envs.DonutRoom import DonutEnv_16, DonutEnv_18, DonutEnv_20
+from minigrid.envs.TRoom import TRoomEnv_16, TRoomEnv_18, TRoomEnv_20
 from minigrid.envs.memory import MemoryEnv
 from minigrid.envs.multiroom import MultiRoom, MultiRoomEnv
 from minigrid.envs.obstructedmaze import (

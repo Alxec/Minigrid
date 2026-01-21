@@ -1501,6 +1501,36 @@ def register_minigrid_envs():
         entry_point='minigrid.envs:LEnv_18'
     )
 
+    register(
+        id='MiniGrid-TRoom-16x16-v0',
+        entry_point='minigrid.envs:TRoomEnv_16'
+    )
+
+    register(
+        id='MiniGrid-TRoom-18x18-v0',
+        entry_point='minigrid.envs:TRoomEnv_18'
+    )
+
+    register(
+        id='MiniGrid-TRoom-20x20-v0',
+        entry_point='minigrid.envs:TRoomEnv_20'
+    )
+
+    register(
+        id='MiniGrid-DonutRoom-16x16-v0',
+        entry_point='minigrid.envs:DonutEnv_16'
+    )
+
+    register(
+        id='MiniGrid-DonutRoom-18x18-v0',
+        entry_point='minigrid.envs:DonutEnv_18'
+    )
+
+    register(
+        id='MiniGrid-DonutRoom-20x20-v0',
+        entry_point='minigrid.envs:DonutEnv_20'
+    )
+
 
 __version__ = "1.2.6"
 register_minigrid_envs()
