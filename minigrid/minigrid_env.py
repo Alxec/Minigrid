@@ -125,9 +125,8 @@ class MiniGridEnv(gym.Env):
         self.highlight = highlight
         self.tile_size = tile_size
         self.agent_pov = agent_pov
-        self.regenerate=True
 
-    def reset(self, *, seed=None, options=None, regenerate=True):
+    def reset(self, *, seed=None, options=None):
         super().reset(seed=seed)
 
         # Reinitialize episode-specific variables
@@ -135,7 +134,7 @@ class MiniGridEnv(gym.Env):
         self.agent_dir = -1
 
         # Generate a new random grid at the start of each episode
-        self._gen_grid(self.width, self.height, self.regenerate)
+        self._gen_grid(self.width, self.height)
 
         # These fields should be defined by _gen_grid
         assert (
@@ -233,7 +232,7 @@ class MiniGridEnv(gym.Env):
         return str
 
     @abstractmethod
-    def _gen_grid(self, width, height, regenerate=True):
+    def _gen_grid(self, width, height):
         pass
 
     def _reward(self) -> float:

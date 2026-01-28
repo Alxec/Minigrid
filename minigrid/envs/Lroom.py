@@ -21,6 +21,7 @@ class L_Env(MiniGridEnv):
     ):
         self.agent_start_pos = agent_start_pos
         self.agent_start_dir = agent_start_dir 
+        self.agent_pov = True
         
         self.Lwidth = Lwidth
         self.Lheight = Lheight

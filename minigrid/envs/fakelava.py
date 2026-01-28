@@ -114,6 +114,7 @@ class FakeLavaEnv(MiniGridEnv):
         self.targetstart = target_start
         self.gates = gates
         self.neg = neg
+        self.regenerate=True
 
 
         randgen = np.random.default_rng(seed=seed)
@@ -145,8 +146,8 @@ class FakeLavaEnv(MiniGridEnv):
     def _gen_mission():
         return "avoid the real lava and get to the fake lava square"
 
-    def _gen_grid(self, width, height, regenerate=True):
-        if regenerate:
+    def _gen_grid(self, width, height):
+        if self.regenerate:
             assert width >= 17 and height >= 13
 
             # Create an empty grid

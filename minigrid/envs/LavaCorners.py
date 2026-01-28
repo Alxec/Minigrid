@@ -52,68 +52,56 @@ class Lava_Corners(MiniGridEnv):
     def _gen_mission():
         return "avoid the real lava and get to the fake lava square"
 
-    def _gen_grid(self, width, height, regenerate=True):
-        if regenerate:
-            # Create an empty grid
-            self.grid = Grid(width, height)
-            
-            # Generate the surrounding walls
-            #Consider: walls at -1, rather than 0
-            self.grid.horz_wall(0,0)
-            self.grid.vert_wall(0,0)
-            self.grid.horz_wall(0,height-1)
-            self.grid.vert_wall(width-1,0)
+    def _gen_grid(self, width, height):
+        # Create an empty grid
+        self.grid = Grid(width, height)
+        
+        # Generate the surrounding walls
+        #Consider: walls at -1, rather than 0
+        self.grid.horz_wall(0,0)
+        self.grid.vert_wall(0,0)
+        self.grid.horz_wall(0,height-1)
+        self.grid.vert_wall(width-1,0)
 
-            loc = [(width/3-4,height/3-4), (2*width/3-1,height/3-1), (width/3,height/3), (2*width/3-2,2*height/3-2)]
+        loc = [(width/3-4,height/3-4), (2*width/3-1,height/3-1), (width/3,height/3), (2*width/3-2,2*height/3-2)]
 
-            shapes = {}
+        shapes = {}
 
-            shapes['T'] = {'name': 'triangle', 'color': self.tri_color}
-            shapes['P'] = {'name': 'plus', 'color': self.plus_color}
-            shapes['X'] = {'name': 'x', 'color': self.x_color}
-            shapes['D'] = {'name': 'dash', 'color': self.tri_color}
+        shapes['T'] = {'name': 'triangle', 'color': self.tri_color}
+        shapes['P'] = {'name': 'plus', 'color': self.plus_color}
+        shapes['X'] = {'name': 'x', 'color': self.x_color}
+        shapes['D'] = {'name': 'dash', 'color': self.tri_color}
 
-            # Create dictionary 
+        # Create dictionary 
 
-            for idx, char in enumerate(self.order):
-                self.place_shape(shapes[char]['name'], loc[idx], shapes[char]['color'])
+        for idx, char in enumerate(self.order):
+            self.place_shape(shapes[char]['name'], loc[idx], shapes[char]['color'])
 
-            #Adding shapes on the bottom and top of the map
-            self.place_shape('plus', (width/3-1,height/3-5), self.x_color)
-            self.place_shape('plus', (width/3,height/3-5), self.x_color)
-            self.place_shape('plus', (width/3+1,height/3-5), self.x_color)
-            self.place_shape('plus', (width/3+2,height/3-5), self.x_color)
-            self.place_shape('plus', (width/3-3,height/3+4), self.plus_color)
-            self.place_shape('plus', (width/3-2,height/3+4), self.plus_color)
-            self.place_shape('plus', (width/3-1,height/3+4), self.plus_color)
-            self.place_shape('plus', (width/3,height/3+4), self.plus_color)
+        #Adding shapes on the bottom and top of the map
+        self.place_shape('plus', (width/3-1,height/3-5), self.x_color)
+        self.place_shape('plus', (width/3,height/3-5), self.x_color)
+        self.place_shape('plus', (width/3+1,height/3-5), self.x_color)
+        self.place_shape('plus', (width/3+2,height/3-5), self.x_color)
+        self.place_shape('plus', (width/3-3,height/3+4), self.plus_color)
+        self.place_shape('plus', (width/3-2,height/3+4), self.plus_color)
+        self.place_shape('plus', (width/3-1,height/3+4), self.plus_color)
+        self.place_shape('plus', (width/3,height/3+4), self.plus_color)
 
 
-            # Place lava
-            self.target_pos = (1, height-2)
-            self.put_obj(Fake_Lava(), *self.target_pos)
-            self.put_obj(Lava(), self.width-2, 1)
-            
-            # Place the agent
-            if self.agent_start_pos is not None:
-                self.agent_pos = self.agent_start_pos
-                self.agent_dir = self.agent_start_dir
-            else:
-                self.agent_pos = (-1, -1)
-                pos = self.place_obj(None)
-                self.agent_pos = pos
-                self.agent_dir = self._rand_int(0, 4)
-
+        # Place lava
+        self.target_pos = (1, height-2)
+        self.put_obj(Fake_Lava(), *self.target_pos)
+        self.put_obj(Lava(), self.width-2, 1)
+        
+        # Place the agent
+        if self.agent_start_pos is not None:
+            self.agent_pos = self.agent_start_pos
+            self.agent_dir = self.agent_start_dir
         else:
-            # Place the agent
-            if self.agent_start_pos is not None:
-                self.agent_pos = self.agent_start_pos
-                self.agent_dir = self.agent_start_dir
-            else:
-                self.agent_pos = (-1, -1)
-                pos = self.place_obj(None)
-                self.agent_pos = pos
-                self.agent_dir = self._rand_int(0, 4)
+            self.agent_pos = (-1, -1)
+            pos = self.place_obj(None)
+            self.agent_pos = pos
+            self.agent_dir = self._rand_int(0, 4)
 
     
     def step(self, action):

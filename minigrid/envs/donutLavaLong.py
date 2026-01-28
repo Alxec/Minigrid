@@ -43,6 +43,7 @@ class Lava_Donut_Long_Env(MiniGridEnv):
         self.shuffle_indices = [0,1,2]
         self.order = order
         self.neg=neg
+        self.regenerate=True
         
         mission_space = MissionSpace(mission_func=self._gen_mission)
         
@@ -61,8 +62,8 @@ class Lava_Donut_Long_Env(MiniGridEnv):
     def _gen_mission():
         return "avoid the real lava and get to the fake lava square"
 
-    def _gen_grid(self, width, height, regenerate=True):
-        if regenerate:
+    def _gen_grid(self, width, height):
+        if self.regenerate:
             # Create an empty grid
             self.grid = Grid(width, height)
             
@@ -140,6 +141,8 @@ class Lava_Donut_Long_Env(MiniGridEnv):
                 pos = self.place_obj(None, reject_fn=reject_lava_rooms)
                 self.agent_pos = pos
                 self.agent_dir = self._rand_int(0, 4)
+            
+            self.regenerate=False
 
         else:
             # Place the agent

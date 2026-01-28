@@ -2,6 +2,8 @@ import random
 import numpy as np
 from gymnasium import spaces
 
+from scipy.spatial.distance import cityblock
+
 from minigrid.core.grid import Grid
 from minigrid.core.mission import MissionSpace
 from minigrid.core.world_object import Floor, Gates, Lava, Fake_Lava
@@ -34,7 +36,7 @@ class Lava_Donut_Env(MiniGridEnv):
         **kwargs
     ):
         self.agent_start_pos = agent_start_pos
-        self.agent_start_dir = agent_start_dir 
+        self.agent_start_dir = agent_start_dir
         
         self.Lwidth = Lwidth
         self.Lheight = Lheight
@@ -44,6 +46,8 @@ class Lava_Donut_Env(MiniGridEnv):
         self.shuffle_indices = [0,1,2]
         self.order = order
         self.neg=neg
+        self.target_pos = np.array([int(Lwidth/2)+2, int(Lheight/2)])
+        self.lava_pos = np.array([int(Lwidth/2)+4, int(Lheight/2)])
         
         mission_space = MissionSpace(mission_func=self._gen_mission)
         
@@ -61,89 +65,79 @@ class Lava_Donut_Env(MiniGridEnv):
     def _gen_mission():
         return "avoid the real lava and get to the fake lava square"
 
-    def _gen_grid(self, width, height, regenerate=True):
-        if regenerate:
-            # Create an empty grid
-            self.grid = Grid(width, height)
-            
-            # Generate the surrounding walls
-            #Consider: walls at -1, rather than 0
-            self.grid.horz_wall(0,0)
-            self.grid.vert_wall(0,0)
-            self.grid.horz_wall(0,height-1)
-            self.grid.vert_wall(width-1,0)
+    def _gen_grid(self, width, height):
+        # Create an empty grid
+        self.grid = Grid(width, height)
+        
+        # Generate the surrounding walls
+        #Consider: walls at -1, rather than 0
+        self.grid.horz_wall(0,0)
+        self.grid.vert_wall(0,0)
+        self.grid.horz_wall(0,height-1)
+        self.grid.vert_wall(width-1,0)
 
-            loc = [(width/3-4,height/3-4), (2*width/3-1,height/3-1), (width/3-3,2*height/3-2), (2*width/3-2,2*height/3-2)]
+        loc = [(width/3-4,height/3-4), (2*width/3-1,height/3-1), (width/3-3,2*height/3-2), (2*width/3-2,2*height/3-2)]
 
-            shapes = {}
+        shapes = {}
 
-            shapes['T'] = {'name': 'triangle', 'color': self.tri_color}
-            shapes['P'] = {'name': 'plus', 'color': self.plus_color}
-            shapes['X'] = {'name': 'x', 'color': self.x_color}
-            shapes['D'] = {'name': 'dash', 'color': self.tri_color}
+        shapes['T'] = {'name': 'triangle', 'color': self.tri_color}
+        shapes['P'] = {'name': 'plus', 'color': self.plus_color}
+        shapes['X'] = {'name': 'x', 'color': self.x_color}
+        shapes['D'] = {'name': 'dash', 'color': self.tri_color}
 
-            # Create dictionary 
+        # Create dictionary 
 
-            for idx, char in enumerate(self.order):
-                self.place_shape(shapes[char]['name'], loc[idx], shapes[char]['color'])
+        for idx, char in enumerate(self.order):
+            self.place_shape(shapes[char]['name'], loc[idx], shapes[char]['color'])
 
-            #Adding shapes on the bottom and top of the map
-            self.place_shape('plus', (width/3-1,height/3-5), self.x_color)
-            self.place_shape('plus', (width/3,height/3-5), self.x_color)
-            self.place_shape('plus', (width/3+1,height/3-5), self.x_color)
-            self.place_shape('plus', (width/3+2,height/3-5), self.x_color)
-            self.place_shape('plus', (width/3-3,height/3+6), self.plus_color)
-            self.place_shape('plus', (width/3-2,height/3+6), self.plus_color)
-            self.place_shape('plus', (width/3-1,height/3+6), self.plus_color)
-            self.place_shape('plus', (width/3,height/3+6), self.plus_color)
+        #Adding shapes on the bottom and top of the map
+        self.place_shape('plus', (width/3-1,height/3-5), self.x_color)
+        self.place_shape('plus', (width/3,height/3-5), self.x_color)
+        self.place_shape('plus', (width/3+1,height/3-5), self.x_color)
+        self.place_shape('plus', (width/3+2,height/3-5), self.x_color)
+        self.place_shape('plus', (width/3-3,height/3+6), self.plus_color)
+        self.place_shape('plus', (width/3-2,height/3+6), self.plus_color)
+        self.place_shape('plus', (width/3-1,height/3+6), self.plus_color)
+        self.place_shape('plus', (width/3,height/3+6), self.plus_color)
 
-            #Adding the central rooms
-            self.grid.horz_wall(int(self.Lwidth/2), int(height/2)-3, length=7)
-            self.grid.horz_wall(int(self.Lwidth/2), int(height/2)+3, length=7)
-            self.grid.vert_wall(int(self.Lwidth/2), int(height/2)-3, length=7)
-            self.grid.vert_wall(int(self.Lwidth/2)+3, int(height/2)-3, length=7)
-            self.grid.vert_wall(int(self.Lwidth/2)+6, int(height/2)-3, length=7)
+        #Adding the central rooms
+        self.grid.horz_wall(int(self.Lwidth/2), int(height/2)-3, length=7)
+        self.grid.horz_wall(int(self.Lwidth/2), int(height/2)+3, length=7)
+        self.grid.vert_wall(int(self.Lwidth/2), int(height/2)-3, length=7)
+        self.grid.vert_wall(int(self.Lwidth/2)+3, int(height/2)-3, length=7)
+        self.grid.vert_wall(int(self.Lwidth/2)+6, int(height/2)-3, length=7)
 
-            self.grid.set(int(self.Lwidth/2)+1, int(height/2)-3, Gates())
-            self.grid.set(int(self.Lwidth/2)+2, int(height/2)-3, Gates())
-            self.grid.set(int(self.Lwidth/2)+4, int(height/2)-3, Gates())
-            self.grid.set(int(self.Lwidth/2)+5, int(height/2)-3, Gates())
-            self.grid.set(int(self.Lwidth/2)+1, int(height/2)+3, Gates())
-            self.grid.set(int(self.Lwidth/2)+2, int(height/2)+3, Gates())
-            self.grid.set(int(self.Lwidth/2)+4, int(height/2)+3, Gates())
-            self.grid.set(int(self.Lwidth/2)+5, int(height/2)+3, Gates())
-            self.grid.set(int(self.Lwidth/2), int(height/2)-1, Gates())
-            self.grid.set(int(self.Lwidth/2), int(height/2), Gates())
-            self.grid.set(int(self.Lwidth/2), int(height/2)+1, Gates())
-            self.grid.set(int(self.Lwidth/2)+6, int(height/2)-1, Gates())
-            self.grid.set(int(self.Lwidth/2)+6, int(height/2), Gates())
-            self.grid.set(int(self.Lwidth/2)+6, int(height/2)+1, Gates())
+        self.grid.set(int(self.Lwidth/2)+1, int(height/2)-3, Gates())
+        self.grid.set(int(self.Lwidth/2)+2, int(height/2)-3, Gates())
+        self.grid.set(int(self.Lwidth/2)+4, int(height/2)-3, Gates())
+        self.grid.set(int(self.Lwidth/2)+5, int(height/2)-3, Gates())
+        self.grid.set(int(self.Lwidth/2)+1, int(height/2)+3, Gates())
+        self.grid.set(int(self.Lwidth/2)+2, int(height/2)+3, Gates())
+        self.grid.set(int(self.Lwidth/2)+4, int(height/2)+3, Gates())
+        self.grid.set(int(self.Lwidth/2)+5, int(height/2)+3, Gates())
+        self.grid.set(int(self.Lwidth/2), int(height/2)-1, Gates())
+        self.grid.set(int(self.Lwidth/2), int(height/2), Gates())
+        self.grid.set(int(self.Lwidth/2), int(height/2)+1, Gates())
+        self.grid.set(int(self.Lwidth/2)+6, int(height/2)-1, Gates())
+        self.grid.set(int(self.Lwidth/2)+6, int(height/2), Gates())
+        self.grid.set(int(self.Lwidth/2)+6, int(height/2)+1, Gates())
 
 
-            # Place lava
-            self.put_obj(Fake_Lava(), int(self.Lwidth/2)+2, int(height/2))
-            self.put_obj(Lava(), int(self.Lwidth/2)+4, int(height/2))
-            
-            # Place the agent
-            if self.agent_start_pos is not None:
-                self.agent_pos = self.agent_start_pos
-                self.agent_dir = self.agent_start_dir
-            else:
-                self.agent_pos = (-1, -1)
-                pos = self.place_obj(None, reject_fn=reject_lava_rooms)
-                self.agent_pos = pos
-                self.agent_dir = self._rand_int(0, 4)
-
+        # Place lava
+        # self.put_obj(Fake_Lava(), int(self.Lwidth/2)+2, int(height/2))
+        # self.put_obj(Lava(), int(self.Lwidth/2)+4, int(height/2))
+        self.put_obj(Fake_Lava(), self.target_pos[0], self.target_pos[1])
+        self.put_obj(Lava(), self.lava_pos[0], self.lava_pos[1])
+        
+        # Place the agent
+        if self.agent_start_pos is not None:
+            self.agent_pos = self.agent_start_pos
+            self.agent_dir = self.agent_start_dir
         else:
-            # Place the agent
-            if self.agent_start_pos is not None:
-                self.agent_pos = self.agent_start_pos
-                self.agent_dir = self.agent_start_dir
-            else:
-                self.agent_pos = (-1, -1)
-                pos = self.place_obj(None, reject_fn=reject_lava_rooms)
-                self.agent_pos = pos
-                self.agent_dir = self._rand_int(0, 4)
+            self.agent_pos = (-1, -1)
+            pos = self.place_obj(None, reject_fn=reject_lava_rooms)
+            self.agent_pos = pos
+            self.agent_dir = self._rand_int(0, 4)
 
     
     def step(self, action):
@@ -153,6 +147,8 @@ class Lava_Donut_Env(MiniGridEnv):
         reward = 0
         terminated = False
         truncated = False
+        right_room_enter = 0
+        midline_cross = 0
 
         # Get the position in front of the agent
         fwd_pos = self.front_pos
@@ -172,6 +168,21 @@ class Lava_Donut_Env(MiniGridEnv):
 
         # Move forward
         elif action == self.actions.forward:
+            # This doesn't wotk as the dictionary returned is still empty
+            # if fwd_cell is Gates:
+            #     agt_pos = np.array(self.agent_pos)
+            #     fwd_targ_dist = cityblock(self.front_pos, self.target_pos)
+            #     fwd_lava_dist = cityblock(self.front_pos, self.lava_pos)
+            #     agt_targ_dist = cityblock(agt_pos, self.target_pos)
+            #     agt_lava_dist = cityblock(agt_pos, self.lava_pos)
+            #     approaching_target = fwd_targ_dist < agt_targ_dist
+            #     approaching_lava = fwd_lava_dist < agt_lava_dist
+            #     if fwd_lava_dist<=3:
+            #         if approaching_lava:
+            #             right_room_enter = 1
+            #         elif approaching_target:
+            #             midline_cross = 1
+                
             if fwd_cell is None or fwd_cell.can_overlap():
                 self.agent_pos = tuple(fwd_pos)
             if fwd_cell is not None and (fwd_cell.type == "goal" or fwd_cell.type == "fake_lava"):
@@ -201,7 +212,9 @@ class Lava_Donut_Env(MiniGridEnv):
 
         obs = self.gen_obs()
 
-        return obs, reward, terminated, truncated, {}
+        return (obs, reward, terminated, truncated,
+                # {'right_room_enter': right_room_enter, 'midline_cross': midline_cross}
+                )
     
     
     def place_shape(self,shape,pos,color):

@@ -36,6 +36,7 @@ class Lava_Maze(MiniGridEnv):
         self.order = order
         self.neg=neg
         self.curtains=curtains
+        self.regenerate=True
         
         mission_space = MissionSpace(mission_func=self._gen_mission)
         
@@ -54,8 +55,8 @@ class Lava_Maze(MiniGridEnv):
     def _gen_mission():
         return "avoid the real lava and get to the fake lava square"
 
-    def _gen_grid(self, width, height, regenerate=True):
-        if regenerate:
+    def _gen_grid(self, width, height):
+        if self.regenerate:
             # Create an empty grid
             self.grid = Grid(width, height)
             
@@ -118,6 +119,8 @@ class Lava_Maze(MiniGridEnv):
                 pos = self.place_obj(None)
                 self.agent_pos = pos
                 self.agent_dir = self._rand_int(0, 4)
+            
+            self.regenerate=False
 
         else:
             # Place the agent
