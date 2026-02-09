@@ -1531,6 +1531,11 @@ def register_minigrid_envs():
         entry_point='minigrid.envs:DonutEnv_20'
     )
 
+    register(
+        id='MiniGrid-OrthDonutRoom-16x16-v0',
+        entry_point='minigrid.envs:OrthogonalDonutEnv_16'
+    )
+
 
 __version__ = "1.2.6"
 register_minigrid_envs()

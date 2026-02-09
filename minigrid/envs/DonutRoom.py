@@ -186,3 +186,92 @@ class DonutEnv_18(Donut_Env):
 class DonutEnv_20(Donut_Env):
     def __init__(self, **kwargs):
         super().__init__(size=20, agent_start_pos=None, **kwargs)
+
+
+import numpy as np
+from minigrid.core.world_object import Wall, Floor, COLOR_TO_IDX, COLORS
+from minigrid.core.grid import Grid
+
+# Registering your specific "Maximally Different" palette
+custom_colors = {
+    "cyan":       np.array([0, 255, 255]),
+    "magenta":    np.array([255, 0, 255]),
+    "white":      np.array([255, 255, 255]),
+    "lime":       np.array([50, 205, 50]),
+    "orange":     np.array([255, 165, 0]),
+    "black":      np.array([0, 0, 0])
+}
+
+for name, rgb in custom_colors.items():
+    if name not in COLOR_TO_IDX:
+        COLOR_TO_IDX[name] = len(COLOR_TO_IDX)
+    COLORS[name] = rgb
+
+class CustomColorDonutEnv(Donut_Env):
+    def __init__(self, **kwargs):
+        # Mapping the new colors to the shape attributes
+        super().__init__(
+            tri_color="cyan",    # Triangle
+            plus_color="white",   # Dash/Plus
+            x_color="lime",      # X
+            **kwargs
+        )
+
+    def _gen_grid(self, width, height, regenerate=True):
+        self.grid = Grid(width, height)
+
+        # 1. WALLS (Black)
+        w_col = "black"
+        for i in range(width):
+            self.grid.set(i, 0, Wall(w_col))
+            self.grid.set(i, height - 1, Wall(w_col))
+        for i in range(height):
+            self.grid.set(0, i, Wall(w_col))
+            self.grid.set(width - 1, i, Wall(w_col))
+
+        # Donut wall
+        for i in range(int(height / 2) - 4, int(height / 2) + 4):
+            for j in range(8):
+                self.grid.set(int(self.Lwidth / 2) + j, i, Wall(w_col))
+
+        # 2. AGENT (Place before floor to avoid the infinite loop)
+        if self.start_pos is not None:
+            self.agent_pos = self.start_pos
+            self.agent_dir = self.agent_start_dir
+        else:
+            self.place_agent()
+
+        # 3. OBJECTS (Cyan, White, Lime)
+        loc = [
+            (width / 3 - 4, height / 3 - 4),
+            (2 * width / 3 - 1, height / 3 - 1),
+            (width / 3 - 3, 2 * height / 3 - 2),
+            (2 * width / 3 - 2, 2 * height / 3 - 2),
+        ]
+        shapes = {
+            "T": {"name": "triangle", "color": self.tri_color},
+            "P": {"name": "dash", "color": self.plus_color},
+            "X": {"name": "x", "color": self.x_color},
+            "D": {"name": "dash", "color": self.tri_color},
+        }
+        for idx, char in enumerate(self.order):
+            self.place_shape(shapes[char]["name"], loc[idx], shapes[char]["color"])
+
+        # Extra decorations
+        for i in range(4):
+            self.place_shape("plus", (width / 3 - 1 + i, height / 3 - 5), self.x_color)
+            self.place_shape("plus", (width / 3 - 3 + i, height / 3 + 6), self.plus_color)
+
+        # 4. FLOOR (Magenta)
+        # We fill the empty background with Magenta
+        for x in range(width):
+            for y in range(height):
+                if self.grid.get(x, y) is None:
+                    self.grid.set(x, y, Floor("magenta"))
+
+        self.mission = self._gen_mission()
+
+# Registration for your 16x16 version
+class OrthogonalDonutEnv_16(CustomColorDonutEnv):
+    def __init__(self, **kwargs):
+        super().__init__(size=16, agent_start_pos=None, **kwargs)
