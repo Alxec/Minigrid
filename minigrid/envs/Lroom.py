@@ -33,7 +33,8 @@ class L_Env(MiniGridEnv):
             grid_size=size,
             max_steps=10*size*size,
             # Set this to True for maximum speed
-            see_through_walls=True
+            see_through_walls=True,
+            **kwargs
         )
 
     @staticmethod
