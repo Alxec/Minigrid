@@ -147,6 +147,13 @@ def register_minigrid_envs():
         entry_point='minigrid.envs:Lava_Donut_Long_Env',
         kwargs={"neg": 0.5}
     )
+
+
+    register(
+        id='MiniGrid-DonutLava-Long-norewards-v0',
+        entry_point='minigrid.envs:Lava_Donut_Long_Env',
+        kwargs={"targets": False}
+    )
     
     
     register(

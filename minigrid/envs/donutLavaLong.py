@@ -30,6 +30,7 @@ class Lava_Donut_Long_Env(MiniGridEnv):
         order = 'TPXD',
         neg = 0,
         max_steps=200,
+        targets = True,
         **kwargs
     ):
         self.agent_start_pos = agent_start_pos
@@ -44,6 +45,7 @@ class Lava_Donut_Long_Env(MiniGridEnv):
         self.order = order
         self.neg=neg
         self.regenerate=True
+        self.targets = targets
         
         mission_space = MissionSpace(mission_func=self._gen_mission)
         
@@ -194,6 +196,9 @@ class Lava_Donut_Long_Env(MiniGridEnv):
             # if fwd_cell is Gates:
             #     fwd_pos = self.front_pos
             #     self.agent_pos = tuple(fwd_pos)
+        if not self.targets:
+            reward = 0
+            terminated = False
 
 
         # Pass
