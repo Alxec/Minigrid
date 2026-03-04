@@ -196,17 +196,17 @@ class Lava_Donut_Long_Env(MiniGridEnv):
             # if fwd_cell is Gates:
             #     fwd_pos = self.front_pos
             #     self.agent_pos = tuple(fwd_pos)
-        if not self.targets:
-            reward = 0
-            terminated = False
-
-
         # Pass
         elif action == self.actions.pickup:
             pass
 
         else:
             raise ValueError(f"Unknown action: {action}")
+        
+
+        if not self.targets:
+            reward = 0
+            terminated = False
 
         if self.step_count >= self.max_steps:
             truncated = True
