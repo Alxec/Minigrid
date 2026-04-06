@@ -8,6 +8,7 @@ from minigrid.envs.donutLava import LavaDonutEnv_16, LavaDonutEnv_17, LavaDonutE
 from minigrid.envs.donutLavaLong import Lava_Donut_Long_Env
 from minigrid.envs.LavaCorners import Lava_Corners
 from minigrid.envs.LavaMaze import Lava_Maze
+from minigrid.envs.AlternationRoom import Alternation_Env
 from minigrid.envs.doorkey import DoorKeyEnv
 from minigrid.envs.dynamicobstacles import DynamicObstaclesEnv
 from minigrid.envs.empty import EmptyEnv

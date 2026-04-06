@@ -11,6 +11,12 @@ def register_minigrid_envs():
     # BlockedUnlockPickup
     # ----------------------------------------
 
+
+    register(
+        id='MiniGrid-Alternation-24x24-v0',
+        entry_point='minigrid.envs:Alternation_Env'
+    )
+
     register(
         id="MiniGrid-BlockedUnlockPickup-v0",
         entry_point="minigrid.envs:BlockedUnlockPickupEnv",
@@ -1596,5 +1602,5 @@ def register_minigrid_envs():
     )
 
 
-__version__ = "1.3.6"
+__version__ = "1.4.0"
 register_minigrid_envs()
