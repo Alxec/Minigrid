@@ -104,7 +104,10 @@ class Maze(MiniGridEnv):
             self.agent_dir = self.agent_start_dir
         else:
             self.agent_pos = (-1, -1)
-            pos = self.place_obj(None)
+            if self.wall_one and self.wall_two:
+                pos = self.place_obj(None, reject_fn=lambda env, pos: (pos[0] < env.width/3 and pos[1] > 2*env.height/3))
+            else:
+                pos = self.place_obj(None)
             self.agent_pos = pos
             self.agent_dir = self._rand_int(0, 4)
 
