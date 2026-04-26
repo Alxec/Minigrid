@@ -22,6 +22,8 @@ class Maze(MiniGridEnv):
         max_steps=300,
         wall_one=False,
         wall_two=True,
+        wall_three=False,
+        wall_four=False,
         **kwargs
     ):
         self.agent_start_pos = agent_start_pos
@@ -36,6 +38,8 @@ class Maze(MiniGridEnv):
         self.order = order
         self.wall_one = wall_one
         self.wall_two = wall_two
+        self.wall_three = wall_three
+        self.wall_four = wall_four
         
         mission_space = MissionSpace(mission_func=self._gen_mission)
         
@@ -91,12 +95,14 @@ class Maze(MiniGridEnv):
         self.place_shape('x', (1,height-7), self.tri_color)
 
         #Adding the walls in the center
-        self.grid.horz_wall(0, int(height/3), length=int(width/3)+1)
         if self.wall_one:
             self.grid.horz_wall(1, height-height//3-1, length=int(width/3))
-        self.grid.vert_wall(width-width//3-1, 0, length=int(2*height/3))
         if self.wall_two:
             self.grid.vert_wall(int(width/3), int(2*height/3), length=int(height/3))
+        if self.wall_three:
+            self.grid.vert_wall(width-width//3-1, 0, length=int(2*height/3))
+        if self.wall_four:
+            self.grid.horz_wall(0, int(height/3), length=int(width/3)+1)
         
         # Place the agent
         if self.agent_start_pos is not None:

@@ -494,6 +494,24 @@ def register_minigrid_envs():
         kwargs={"wall_one": True, "wall_two": False},
     )
 
+    register(
+        id="MiniGrid-Maze-simple-v0",
+        entry_point="minigrid.envs:Maze",
+        kwargs={"wall_three": True, "wall_four": True},
+    )
+
+    register(
+        id="MiniGrid-Maze-simple-blocked-v0",
+        entry_point="minigrid.envs:Maze",
+        kwargs={"wall_one": True, "wall_three": True, "wall_four": True},
+    )
+
+    register(
+        id="MiniGrid-Maze-simple-v1",
+        entry_point="minigrid.envs:Maze",
+        kwargs={"wall_one": True, "wall_two": False, "wall_three": True, "wall_four": True},
+    )
+
     # FakeLava
     # ----------------------------------------
 
@@ -1622,5 +1640,5 @@ def register_minigrid_envs():
     )
 
 
-__version__ = "1.4.2"
+__version__ = "1.4.21"
 register_minigrid_envs()
