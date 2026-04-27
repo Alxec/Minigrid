@@ -22,8 +22,8 @@ class Maze(MiniGridEnv):
         max_steps=300,
         wall_one=False,
         wall_two=True,
-        wall_three=False,
-        wall_four=False,
+        wall_three=True,
+        wall_four=True,
         **kwargs
     ):
         self.agent_start_pos = agent_start_pos
